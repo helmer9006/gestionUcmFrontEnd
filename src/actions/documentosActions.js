@@ -3,10 +3,13 @@ import {
   TRAER_DOCUMENTO,
   TRAER_DOCUMENTO_EXITO,
   TRAER_DOCUMENTO_ERROR,
+  OBTENER_DOCUMENTO_ELIMINAR,
+  DOCUMENTO_ELIMINADO_EXITO,
+  DOCUMENTO_ELIMINADO_ERROR
 } from "../types";
 import clienteAxios from "../config/axios.js";
 
-//TRAER LOS DOCUMENTOS
+//#region TRAER LOS DOCUMENTOS
 //recibimos el tipo de documento y el numero de documento desde componente documento
 export function traerDocumentosActions(busqueda) {
   return async (dispatch) => {
@@ -46,3 +49,20 @@ const traerDocumentoError = (error) => ({
   type: TRAER_DOCUMENTO_ERROR,
   payload: error,
 });
+
+//#endregion
+
+
+//#region SELECCIONA Y ELIMINA DOCUMENTO
+    export function borrarDocumentoAction(id){
+            return async(dispatch) => {
+                dispatch(obtenerDocumentoEliminar(id));
+                console.log(id)
+            }
+    }
+
+    export const obtenerDocumentoEliminar = id => ({
+        type: OBTENER_DOCUMENTO_ELIMINAR,
+        payload: id
+    })
+//#endregion

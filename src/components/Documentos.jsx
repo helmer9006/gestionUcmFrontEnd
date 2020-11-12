@@ -1,26 +1,30 @@
 import React, { useState } from "react";
-import { Card, Input, Tag, Select } from "antd";
+import { Card, Input, Tag, Select, Table, Tooltip, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux"; //para acceder al store
 
 //ACTIONS DE REDUX
 import { traerDocumentosActions } from "../actions/documentosActions";
-
+import {borrarDocumentoAction} from '../actions/documentosActions';
 import {
   FullscreenExitOutlined,
   AudioOutlined,
   SyncOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
-import TablaDocumentos from "./TablaDocumentos";
+
 
 const Documentos = () => {
+
   const { Option } = Select;
 
   //STATE DEL COMPONENTE
   const [busqueda, setBusqueda] = useState(""); //state para guardar valor a buscar
   const [tipoDocumento, setTipoDocumento] = useState("");
   const [placeholder, setPlaceholder] = useState("");
+  const [documento, setDocumento] = useState({
 
+  })
   //ACCEDER AL STATE GLOBAL O STORE
   const cargando = useSelector((state) => state.documentos.loading);
   const error = useSelector((state) => state.documentos.error);
@@ -38,7 +42,7 @@ const Documentos = () => {
   const submitTraerDocumento = (valor, e) => {
     e.preventDefault();
     //validar formulario
-    if (valor.trim() === "") {
+    if (valor.trim() === "" || isNaN(valor.trim())) {
       return;
     }
     //si no hay errores
@@ -83,42 +87,33 @@ const Documentos = () => {
 
   //#endregion
 
-  //#region DATOS PRUEBAS
-  const dataSource = [
+//FUNCION PARA CAPTURAR ITEM SELECCIONADO
+const seleccionarDocumento = (documento) =>{
+  setDocumento(documento);
+  console.log(documento)
+}
+
+  //#region COLUMNAS TABLAS
+  //FACTURAS
+  const columnsTablaFactura = [
+    { title: "Factura", dataIndex: "CONS_DOC_CONT", key: "CONS_DOC_CONT" },
+    { title: "Fecha", dataIndex: "Fecha", key: "Fecha" },
+    { title: "Valor", dataIndex: "Valor", key: "Valor" },
+    { title: "Admisión", dataIndex: "ID_ADMIS_ADXFAC", key: "ID_ADMIS_ADXFAC" },
+    { title: "Apb", dataIndex: "APB", key: "APB" },
     {
-      key: "1",
-      name: "Mike",
-      age: 32,
-      address: "10 Downing Street",
-    },
-    {
-      key: "2",
-      name: "John",
-      age: 42,
-      address: "10 Downing Street",
+      title: "Accción",
+      dataIndex: "",
+      key: "x",
+      render: (fila) => (
+        <Tooltip title="Eliminar">
+          <Button type="danger" shape="circle" onClick={() => seleccionarDocumento(fila)} icon={<DeleteOutlined />} />
+        </Tooltip>
+      ),
     },
   ];
-
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-  ];
-
-  //#endregion FIN DATOS PRUEBA
-
+  //#endregion
+  
   return (
     <div className="site-card-border-less-wrapper">
       <Card
@@ -151,21 +146,28 @@ const Documentos = () => {
             onChange={(e) => setBusqueda(e.target.value)}
           />
           {cargando ? (
-            <Tag icon={<SyncOutlined spin />} color="processing" style={{padding: '.3rem', fontSize: '13px'}}>
+            <Tag
+              icon={<SyncOutlined spin />}
+              color="processing"
+              style={{ padding: ".3rem", fontSize: "13px" }}
+            >
               cargando
             </Tag>
           ) : null}
           {error ? (
-            <Tag icon={<CloseCircleOutlined />} color="error" style={{padding: '.3rem',fontSize: '13px'}}>
+            <Tag
+              icon={<CloseCircleOutlined />}
+              color="error"
+              style={{ padding: ".3rem", fontSize: "13px" }}
+            >
               {mensajeError}
             </Tag>
           ) : null}
         </form>
       </Card>
-      <TablaDocumentos documentos={documentos} />
-      {/* <Table dataSource={dataSource} columns={columns} />; */}
+      <Table style={{marginTop: "2rem"}}  columns={columnsTablaFactura} dataSource={documentos} />
     </div>
   );
-};
+}
 
 export default Documentos;
